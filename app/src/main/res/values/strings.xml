@@ -5,4 +5,7 @@
     <string name="search">Search</string>
     <string name="NYAS_key">8bd0a221b6e4ac084d4ed1e82ce78616:2:74339535</string>
     <string name="title_activity_article">ArticleActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

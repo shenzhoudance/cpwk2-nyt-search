@@ -2,8 +2,11 @@ package com.codepath.cpw2nytimessearch.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,9 +15,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 
-import com.codepath.cpw2nytimessearch.Article;
 import com.codepath.cpw2nytimessearch.ArticleArrayAdapter;
 import com.codepath.cpw2nytimessearch.R;
+import com.codepath.cpw2nytimessearch.activities.SearchOptionDialog.SearchOptionListener;
+import com.codepath.cpw2nytimessearch.models.Article;
+import com.codepath.cpw2nytimessearch.models.SearchOption;
+import com.google.common.base.Joiner;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -32,7 +38,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cz.msebera.android.httpclient.Header;
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends AppCompatActivity implements SearchOptionListener {
   @Bind(R.id.etQuery) EditText etQuery;
   @Bind(R.id.gvResults) GridView gvResults;
   @Bind(R.id.btnSearch) Button btnSearch;
@@ -40,6 +46,7 @@ public class SearchActivity extends AppCompatActivity {
 
   ArrayList<Article> articles;
   ArticleArrayAdapter adapter;
+  SearchOption option;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +57,7 @@ public class SearchActivity extends AppCompatActivity {
     ButterKnife.bind(this);
     articles = new ArrayList<>();
     adapter = new ArticleArrayAdapter(this, articles);
+    option = new SearchOption("", "", new ArrayList<String>());
     gvResults.setAdapter(adapter);
     gvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override
@@ -78,6 +86,10 @@ public class SearchActivity extends AppCompatActivity {
 
     //noinspection SimplifiableIfStatement
     if (id == R.id.action_settings) {
+      FragmentManager fm = getSupportFragmentManager();
+      SearchOptionDialog searchOptionDialog = SearchOptionDialog.newInstance(option);
+      searchOptionDialog.show(fm, "fragment_search_option");
+
       return true;
     }
 
@@ -86,11 +98,25 @@ public class SearchActivity extends AppCompatActivity {
 
   @OnClick(R.id.btnSearch)
   public void onArticleSearch(View view) {
+    adapter.clear();
     AsyncHttpClient client = new AsyncHttpClient();
     String url = "http://api.nytimes.com/svc/search/v2/articlesearch.json";
     RequestParams params = new RequestParams();
     params.add("api-key", NYAS_KEY);
     params.add("q", etQuery.getText().toString());
+    String beginDate = option.getBeginDate();
+    if (!TextUtils.isEmpty(beginDate) && !beginDate.equals("NOT SET")) {
+      params.add("begin_date", beginDate);
+    }
+    String sortStr = option.getSortOrder();
+    if (!TextUtils.isEmpty(sortStr)) {
+      params.add("sort", sortStr.toLowerCase());
+    }
+    ArrayList<String> newsDesk = option.getNewsDesk();
+    if (newsDesk != null && newsDesk.size() > 0) {
+      params.add("fq", "news_desk:(\"" + Joiner.on("\" \"").join(newsDesk) + "\")");
+
+    }
     client.get(this, url, params, new JsonHttpResponseHandler() {
       @Override
       public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -103,5 +129,13 @@ public class SearchActivity extends AppCompatActivity {
         }
       }
     });
+  }
+
+  @Override
+  public void onFinishSearchOption(SearchOption option) {
+    Parcel p = Parcel.obtain();
+    option.writeToParcel(p, 0);
+    p.setDataPosition(0);
+    this.option = SearchOption.CREATOR.createFromParcel(p);
   }
 }

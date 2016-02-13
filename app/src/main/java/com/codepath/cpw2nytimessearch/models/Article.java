@@ -1,4 +1,7 @@
-package com.codepath.cpw2nytimessearch;
+package com.codepath.cpw2nytimessearch.models;
+
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -7,10 +10,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by qi_zhu on 2/8/16.
- */
-public class Article {
+public class Article implements Parcelable {
   String url;
   String headline;
   String imageUrl;
@@ -52,4 +52,35 @@ public class Article {
     }
     return res;
   }
+
+  @Override
+  public int describeContents() {
+    return 0;
+  }
+
+  @Override
+  public void writeToParcel(Parcel dest, int flags) {
+    dest.writeString(this.url);
+    dest.writeString(this.headline);
+    dest.writeString(this.imageUrl);
+  }
+
+  public Article() {
+  }
+
+  private Article(Parcel in) {
+    this.url = in.readString();
+    this.headline = in.readString();
+    this.imageUrl = in.readString();
+  }
+
+  public static final Parcelable.Creator<Article> CREATOR = new Parcelable.Creator<Article>() {
+    public Article createFromParcel(Parcel source) {
+      return new Article(source);
+    }
+
+    public Article[] newArray(int size) {
+      return new Article[size];
+    }
+  };
 }

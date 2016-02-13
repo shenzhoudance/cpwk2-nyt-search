@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:columnCount="3"
+            android:rowCount="7"
+            android:padding="20dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Begin Date"
+        android:id="@+id/textView"
+        android:layout_row="0"
+        android:layout_column="0"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sort Order"
+        android:id="@+id/textView2"
+        android:layout_row="1"
+        android:layout_column="0"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Newest"
+        android:id="@+id/btnOrder"
+        android:layout_row="1"
+        android:layout_column="1"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="News Desk Values"
+        android:id="@+id/textView3"
+        android:layout_row="2"
+        android:layout_column="0"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="11/22/2016"
+        android:id="@+id/btnDate"
+        android:layout_row="0"
+        android:layout_column="1"/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Arts"
+        android:id="@+id/cbArts"
+        android:layout_row="2"
+        android:layout_column="1"
+        android:checked="false"/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fashion &amp; Style"
+        android:id="@+id/cbFashion"
+        android:layout_row="3"
+        android:layout_column="1"
+        android:checked="false"/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sports"
+        android:id="@+id/cbSports"
+        android:layout_row="4"
+        android:layout_column="1"
+        android:checked="false"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:id="@+id/btnCancel"
+        android:layout_row="6"
+        android:layout_column="0"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:id="@+id/btnSave"
+        android:layout_row="6"
+        android:layout_column="1"/>
+
+</GridLayout>

@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.codepath.cpw2nytimessearch.models.Article;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
