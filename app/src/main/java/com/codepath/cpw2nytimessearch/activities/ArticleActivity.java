@@ -22,6 +22,18 @@ public class ArticleActivity extends AppCompatActivity {
   private ShareActionProvider miShareAction;
 
   @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      // This is the up button
+      case android.R.id.home:
+        this.finish();
+        return true;
+      default:
+        return super.onOptionsItemSelected(item);
+    }
+  }
+
+  @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.menu_article, menu);
     MenuItem item = menu.findItem(R.id.menu_item_share);
@@ -31,7 +43,7 @@ public class ArticleActivity extends AppCompatActivity {
     shareIntent.setType("text/plain");
     shareIntent.putExtra(Intent.EXTRA_TEXT, webView.getUrl());
     miShareAction.setShareIntent(shareIntent);
-    return true;
+    return super.onCreateOptionsMenu(menu);
   }
 
   @Override
@@ -40,6 +52,7 @@ public class ArticleActivity extends AppCompatActivity {
     setContentView(R.layout.activity_article);
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
+    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     ButterKnife.bind(this);
 
