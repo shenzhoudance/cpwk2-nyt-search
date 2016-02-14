@@ -16,8 +16,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -42,13 +40,10 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.BindString;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import cz.msebera.android.httpclient.Header;
 
 public class SearchActivity extends AppCompatActivity implements SearchOptionListener {
-  @Bind(R.id.etQuery) EditText etQuery;
   @Bind(R.id.gvResults) GridView gvResults;
-  @Bind(R.id.btnSearch) Button btnSearch;
   @BindString(R.string.NYAS_key) String NYAS_KEY;
 
   ArrayList<Article> articles;
@@ -124,13 +119,6 @@ public class SearchActivity extends AppCompatActivity implements SearchOptionLis
 
     return super.onOptionsItemSelected(item);
   }
-
-  @OnClick(R.id.btnSearch)
-  public void onArticleSearch(View view) {
-    String query = etQuery.getText().toString();
-    search(query);
-  }
-
 
   public void search(String query) {
     if (!checkInternet()) {
