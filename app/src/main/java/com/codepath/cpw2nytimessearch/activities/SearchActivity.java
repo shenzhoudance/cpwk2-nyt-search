@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -51,6 +52,7 @@ public class SearchActivity extends AppCompatActivity implements SearchOptionLis
   ArticleArrayAdapter adapter;
   SearchOption option;
   String query;
+  Boolean hasMore;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -74,8 +76,10 @@ public class SearchActivity extends AppCompatActivity implements SearchOptionLis
     gvResults.setOnScrollListener(new EndlessScrollListener() {
       @Override
       public boolean onLoadMore(int page, int totalItemsCount) {
-        search(page);
-        return true;
+        Log.d("onLoadMore:", page + "");
+        // WHY? WHY? WHY? page == 2 when this function is called on the first time. :(
+        search(page - 1);
+        return SearchActivity.this.hasMore;
       }
     });
   }
@@ -142,6 +146,7 @@ public class SearchActivity extends AppCompatActivity implements SearchOptionLis
     params.add("api-key", NYAS_KEY);
     params.add("q", query);
     params.add("page", "" + page);
+    Log.d("Search", "page:" + page);
     String beginDate = option.getBeginDate();
     if (!TextUtils.isEmpty(beginDate) && !beginDate.equals("NOT SET")) {
       params.add("begin_date", beginDate);
@@ -159,12 +164,18 @@ public class SearchActivity extends AppCompatActivity implements SearchOptionLis
       @Override
       public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
         try {
+          JSONObject meta = response.getJSONObject("response").getJSONObject("meta");
+          int hits = meta.getInt("hits");
+          int offset = meta.getInt("offset");
+          Log.d("search", "hits:" + hits);
+          Log.d("search", "offset:" + offset);
           JSONArray articlesJson = response.getJSONObject("response").getJSONArray("docs");
           List<Article> articles = Article.FromJsonArray(articlesJson);
           adapter.addAll(articles);
           if (articles.size() < 1) {
             Toast.makeText(getApplicationContext(), "Not result found", Toast.LENGTH_LONG).show();
           }
+          SearchActivity.this.hasMore = ((offset + 10) < hits);
         } catch (JSONException e) {
           e.printStackTrace();
         }
