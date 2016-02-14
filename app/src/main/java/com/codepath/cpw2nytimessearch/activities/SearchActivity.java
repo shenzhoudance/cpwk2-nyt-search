@@ -1,6 +1,9 @@
 package com.codepath.cpw2nytimessearch.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.support.v4.app.FragmentManager;
@@ -14,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.codepath.cpw2nytimessearch.ArticleArrayAdapter;
 import com.codepath.cpw2nytimessearch.R;
@@ -29,6 +33,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -98,6 +103,9 @@ public class SearchActivity extends AppCompatActivity implements SearchOptionLis
 
   @OnClick(R.id.btnSearch)
   public void onArticleSearch(View view) {
+    if (!checkInternet()) {
+      return;
+    }
     adapter.clear();
     AsyncHttpClient client = new AsyncHttpClient();
     String url = "http://api.nytimes.com/svc/search/v2/articlesearch.json";
@@ -128,7 +136,43 @@ public class SearchActivity extends AppCompatActivity implements SearchOptionLis
           e.printStackTrace();
         }
       }
+
+      @Override
+      public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+        if (!isOnline()) {
+          Toast.makeText(getApplicationContext(), "Please check your network", Toast.LENGTH_LONG).show();
+        } else {
+          Toast.makeText(getApplicationContext(), "Server issue", Toast.LENGTH_LONG).show();
+        }
+        super.onFailure(statusCode, headers, throwable, errorResponse);
+      }
     });
+  }
+
+  private Boolean isNetworkAvailable() {
+    ConnectivityManager connectivityManager
+      = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+    return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
+  }
+
+  private boolean checkInternet() {
+    if (!isNetworkAvailable()) {
+      Toast.makeText(this, "Network not available", Toast.LENGTH_LONG).show();
+      return false;
+    }
+    return true;
+  }
+
+  public boolean isOnline() {
+    Runtime runtime = Runtime.getRuntime();
+    try {
+      Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+      int     exitValue = ipProcess.waitFor();
+      return (exitValue == 0);
+    } catch (IOException e)          { e.printStackTrace(); }
+    catch (InterruptedException e) { e.printStackTrace(); }
+    return false;
   }
 
   @Override
