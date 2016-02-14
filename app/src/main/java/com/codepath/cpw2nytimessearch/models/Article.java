@@ -27,8 +27,6 @@ public class Article implements Parcelable {
     return imageUrl;
   }
 
-
-
   public static List<Article> FromJsonArray(JSONArray articlesJson) {
     ArrayList<Article> res = new ArrayList<>();
     for (int i = 0; i < articlesJson.length(); i++) {

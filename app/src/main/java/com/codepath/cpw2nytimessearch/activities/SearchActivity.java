@@ -132,6 +132,9 @@ public class SearchActivity extends AppCompatActivity implements SearchOptionLis
           JSONArray articlesJson = response.getJSONObject("response").getJSONArray("docs");
           List<Article> articles = Article.FromJsonArray(articlesJson);
           adapter.addAll(articles);
+          if (articles.size() < 1) {
+            Toast.makeText(getApplicationContext(), "Not result found", Toast.LENGTH_LONG).show();
+          }
         } catch (JSONException e) {
           e.printStackTrace();
         }
