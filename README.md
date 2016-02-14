@@ -42,7 +42,7 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-TBD
+![walk through](https://github.com/zhuqicn/cpwk2-nyt-search/blob/master/NYT.Search.gif?raw=true)
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
