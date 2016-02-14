@@ -38,8 +38,6 @@ The following **additional** features are implemented:
 
 * [ ] List anything else that you can get done to improve the app functionality!
 
-* Properly implement the "Back" button. I tried to use `getSupportActionBar().setDisplayHomeAsUpEnabled(true);` and instead of bringing user **back** to last screen, it brought user **up** to the main activity, which everything cleared. I end up manually implement the menu option's on click evenet, calling `finish()`. There must be a easier way to do this.
-
 ## Video Walkthrough
 
 Here's a walkthrough of implemented user stories:

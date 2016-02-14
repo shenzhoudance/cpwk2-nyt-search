@@ -22,18 +22,6 @@ public class ArticleActivity extends AppCompatActivity {
   private ShareActionProvider miShareAction;
 
   @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-      // This is the up button
-      case android.R.id.home:
-        this.finish();
-        return true;
-      default:
-        return super.onOptionsItemSelected(item);
-    }
-  }
-
-  @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.menu_article, menu);
     MenuItem item = menu.findItem(R.id.menu_item_share);
