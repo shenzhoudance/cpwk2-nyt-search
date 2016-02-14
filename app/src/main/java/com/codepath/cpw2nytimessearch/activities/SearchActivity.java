@@ -20,6 +20,7 @@ import android.widget.GridView;
 import android.widget.Toast;
 
 import com.codepath.cpw2nytimessearch.ArticleArrayAdapter;
+import com.codepath.cpw2nytimessearch.EndlessScrollListener;
 import com.codepath.cpw2nytimessearch.R;
 import com.codepath.cpw2nytimessearch.activities.SearchOptionDialog.SearchOptionListener;
 import com.codepath.cpw2nytimessearch.models.Article;
@@ -49,6 +50,7 @@ public class SearchActivity extends AppCompatActivity implements SearchOptionLis
   ArrayList<Article> articles;
   ArticleArrayAdapter adapter;
   SearchOption option;
+  String query;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +71,13 @@ public class SearchActivity extends AppCompatActivity implements SearchOptionLis
         startActivity(i);
       }
     });
-
+    gvResults.setOnScrollListener(new EndlessScrollListener() {
+      @Override
+      public boolean onLoadMore(int page, int totalItemsCount) {
+        search(page);
+        return true;
+      }
+    });
   }
 
   @Override
@@ -83,8 +91,8 @@ public class SearchActivity extends AppCompatActivity implements SearchOptionLis
       @Override
       public boolean onQueryTextSubmit(String query) {
         // perform query here
-
-        search(query);
+        SearchActivity.this.query = query;
+        search(0);
         // workaround to avoid issues with some emulators and keyboard devices firing twice if a keyboard enter is used
         // see https://code.google.com/p/android/issues/detail?id=24599
         searchView.clearFocus();
@@ -120,16 +128,20 @@ public class SearchActivity extends AppCompatActivity implements SearchOptionLis
     return super.onOptionsItemSelected(item);
   }
 
-  public void search(String query) {
+  public void search(int page) {
     if (!checkInternet()) {
       return;
     }
-    adapter.clear();
+    if (page == 0) {
+      adapter.clear();
+    }
+    String query = this.query;
     AsyncHttpClient client = new AsyncHttpClient();
     String url = "http://api.nytimes.com/svc/search/v2/articlesearch.json";
     RequestParams params = new RequestParams();
     params.add("api-key", NYAS_KEY);
     params.add("q", query);
+    params.add("page", "" + page);
     String beginDate = option.getBeginDate();
     if (!TextUtils.isEmpty(beginDate) && !beginDate.equals("NOT SET")) {
       params.add("begin_date", beginDate);
