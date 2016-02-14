@@ -7,7 +7,9 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -79,6 +81,28 @@ public class SearchActivity extends AppCompatActivity implements SearchOptionLis
   public boolean onCreateOptionsMenu(Menu menu) {
     // Inflate the menu; this adds items to the action bar if it is present.
     getMenuInflater().inflate(R.menu.menu_search, menu);
+
+    MenuItem searchItem = menu.findItem(R.id.action_search);
+    final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+    searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+      @Override
+      public boolean onQueryTextSubmit(String query) {
+        // perform query here
+
+        search(query);
+        // workaround to avoid issues with some emulators and keyboard devices firing twice if a keyboard enter is used
+        // see https://code.google.com/p/android/issues/detail?id=24599
+        searchView.clearFocus();
+
+        return true;
+      }
+
+      @Override
+      public boolean onQueryTextChange(String newText) {
+        return false;
+      }
+    });
+
     return true;
   }
 
@@ -103,6 +127,12 @@ public class SearchActivity extends AppCompatActivity implements SearchOptionLis
 
   @OnClick(R.id.btnSearch)
   public void onArticleSearch(View view) {
+    String query = etQuery.getText().toString();
+    search(query);
+  }
+
+
+  public void search(String query) {
     if (!checkInternet()) {
       return;
     }
@@ -111,7 +141,7 @@ public class SearchActivity extends AppCompatActivity implements SearchOptionLis
     String url = "http://api.nytimes.com/svc/search/v2/articlesearch.json";
     RequestParams params = new RequestParams();
     params.add("api-key", NYAS_KEY);
-    params.add("q", etQuery.getText().toString());
+    params.add("q", query);
     String beginDate = option.getBeginDate();
     if (!TextUtils.isEmpty(beginDate) && !beginDate.equals("NOT SET")) {
       params.add("begin_date", beginDate);
