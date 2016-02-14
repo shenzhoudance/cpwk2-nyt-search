@@ -138,6 +138,7 @@ public class SearchActivity extends AppCompatActivity implements SearchOptionLis
     }
     if (page == 0) {
       adapter.clear();
+      adapter.notifyDataSetChanged();
     }
     String query = this.query;
     AsyncHttpClient client = new AsyncHttpClient();
